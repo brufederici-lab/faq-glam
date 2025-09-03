@@ -4,20 +4,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Carregar o conteúdo do FAQ a partir do arquivo JSON
   fetch('./faq_glam.json')  // Garante que o caminho esteja correto
-    .then(response => response.json()) 
-    .then(data => renderFAQ(data))
+    .then(response => response.json())
+    .then(data => {
+      // Verificar se o JSON foi carregado corretamente
+      if (!data || !Array.isArray(data)) {
+        throw new Error('Dados JSON inválidos ou não carregados corretamente');
+      }
+      renderFAQ(data);
+    })
     .catch(error => {
       console.error('Erro ao carregar FAQ:', error);
-      faqContainer.innerHTML = '<p>Houve um erro ao carregar o conteúdo do FAQ.</p>';
+      faqContainer.innerHTML = `<p>Erro ao carregar FAQ: ${error.message}</p>`;
     });
 
   function renderFAQ(data) {
-    // Certifique-se de que temos dados válidos
-    if (!data || data.length === 0) {
+    // Verifica se os dados não estão vazios
+    if (data.length === 0) {
       faqContainer.innerHTML = '<p>Não há dados para exibir.</p>';
       return;
     }
 
+    // Itera sobre os dados
     data.forEach(category => {
       const categoryDiv = document.createElement('div');
       categoryDiv.classList.add('faq-category');
@@ -26,8 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
       categoryTitle.textContent = category.title || 'Sem título';  // Usando title do JSON
       categoryDiv.appendChild(categoryTitle);
 
-      // Verifique se a categoria tem subseções
-      if (category.subsections && category.subsections.length > 0) {
+      // Verifica se a categoria tem subseções
+      if (category.subsections && Array.isArray(category.subsections) && category.subsections.length > 0) {
         category.subsections.forEach(subsection => {
           const faqItem = document.createElement('div');
           faqItem.classList.add('faq-item');
@@ -36,11 +43,17 @@ document.addEventListener("DOMContentLoaded", () => {
           questionElement.textContent = subsection.title || 'Sem pergunta';  // Usando title de cada subseção
           faqItem.appendChild(questionElement);
 
-          subsection.paragraphs.forEach(paragraph => {
-            const paragraphElement = document.createElement('div');
-            paragraphElement.textContent = paragraph || 'Sem resposta';  // Usando paragraphs para as respostas
-            faqItem.appendChild(paragraphElement);
-          });
+          if (Array.isArray(subsection.paragraphs) && subsection.paragraphs.length > 0) {
+            subsection.paragraphs.forEach(paragraph => {
+              const paragraphElement = document.createElement('div');
+              paragraphElement.textContent = paragraph || 'Sem resposta';  // Usando paragraphs para as respostas
+              faqItem.appendChild(paragraphElement);
+            });
+          } else {
+            const noParagraphs = document.createElement('p');
+            noParagraphs.textContent = 'Sem resposta disponível.';
+            faqItem.appendChild(noParagraphs);
+          }
 
           faqItem.addEventListener('click', () => {
             faqItem.classList.toggle('open');
