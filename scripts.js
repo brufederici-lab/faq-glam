@@ -1,29 +1,9 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-}
-
-header {
-  background-color: #4b0082;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-#search-input {
-  width: 50%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 5px;
-  border: none;
 document.addEventListener("DOMContentLoaded", () => {
   const faqContainer = document.getElementById('faq-container');
   const searchInput = document.getElementById('search-input');
 
   // Carregar o conteúdo do FAQ a partir do arquivo JSON
-  fetch('faq_glam.json')
+  fetch('./faq_glam.json')  // Garante que o caminho esteja correto
     .then(response => response.json())
     .then(data => renderFAQ(data))
     .catch(error => console.error('Erro ao carregar FAQ:', error));
