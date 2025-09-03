@@ -14,21 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
       categoryDiv.classList.add('faq-category');
 
       const categoryTitle = document.createElement('h2');
-      categoryTitle.textContent = category.categoria;
+      categoryTitle.textContent = category.title || 'Sem título';  // Usando title do JSON
       categoryDiv.appendChild(categoryTitle);
 
-      category.perguntas.forEach(question => {
+      category.subsections.forEach(subsection => {
         const faqItem = document.createElement('div');
         faqItem.classList.add('faq-item');
 
         const questionElement = document.createElement('div');
-        questionElement.textContent = question.pergunta;
+        questionElement.textContent = subsection.title || 'Sem pergunta';  // Usando title de cada subseção
         faqItem.appendChild(questionElement);
 
-        const answerElement = document.createElement('div');
-        answerElement.classList.add('answer');
-        answerElement.textContent = question.resposta;
-        faqItem.appendChild(answerElement);
+        subsection.paragraphs.forEach(paragraph => {
+          const paragraphElement = document.createElement('div');
+          paragraphElement.textContent = paragraph || 'Sem resposta';  // Usando paragraphs para as respostas
+          faqItem.appendChild(paragraphElement);
+        });
 
         faqItem.addEventListener('click', () => {
           faqItem.classList.toggle('open');
